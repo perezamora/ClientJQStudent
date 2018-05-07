@@ -1,37 +1,4 @@
-﻿var utilidades = (function () {
-
-    var getDatos = function (url) {
-        return ($.get(url));
-    };
-
-    var postDatos = function (url, data) {
-
-        var urlPost = document.location.origin + url;
-        return ($.post({
-            url: url,
-            data: data
-        }));
-    };
-
-    var fetchDatos = function (url, data) {
-
-        var urlPost = document.location.origin + url;
-        return ($.post({
-            url: urlPost,
-            dataType: "json",
-            contentType: "application/json",
-            data: data
-        }));
-    };
-
-    return {
-        getDatos: getDatos,
-        postDatos: postDatos,
-        fetchDatos: fetchDatos
-    }
-
-})();
-
+﻿
 var StudentInfoController = (function () {
 
     var DOMStrings = {
@@ -40,18 +7,20 @@ var StudentInfoController = (function () {
     };
 
     var DOMEventStrings = {
+        viewstudent: ".view_student",
+        editstudent: ".edit_student",
+        deletestudent: ".delete_student"
     };
 
     var APIurlStrings = {
-        apiAddStudent: '/api/student/',
-        apiGetByIdStudent: '/api/student/',
+        apiGetByIdStudent: 'http://localhost:50720/api/student/Read',
         apiGetAll: 'http://localhost:50720/api/student/GetAll',
-        apiDeleteStudent: '/api/student/',
-        apiUpdateStudent: '/api/student/'
+        apiDeleteStudent: 'http://localhost:50720/api/student/Delete/',
+        apiUpdateStudent: 'http://localhost:50720/api/student/Update'
     };
 
     var dataTableStudent = {
-        "row_header": ["Id", "Name", "Apellidos", "Dni", "Fecha Nacimiento", "Edad", "Fecha Creacion"]
+        "row_header": ["Id", "Name", "Apellidos", "Dni", "Edad"]
     };
 
     var getDOMEventStrings = function () {
@@ -84,8 +53,16 @@ var StudentInfoController = (function () {
         console.log(row);
         var html = '';
         for (var student in row) {
-            html += "<td>" + row[student] + "</td>"
+            if (student !== "FechaNacimiento" &&
+                student !== "FechaCreacion") {
+                html += "<td>" + row[student] + "</td>";
+            }
         }
+
+        html += "<td><span type='button' class='view_student btn btn-info' data-student='" + row.Id + "'> View </span></td>";
+        html += "<td><span type='button' class='edit_student btn btn-success' data-student='" + row.Id + "'> Edit </span></td>";
+        html += "<td><span type='button' class='delete_student btn btn-danger' data-student='" + row.Id + "'> Delete </span></td>";
+
         return html;
     }
 
@@ -108,6 +85,10 @@ var StudentInfoController = (function () {
             console.log(data);
             showTableStudents(data);
 
+            $(DOMEventStrings.deletestudent).on("click", deleteStudent);
+            $(DOMEventStrings.viewstudent).on("click", viewStudent);
+            $(DOMEventStrings.editstudent).on("click", editStudent);
+
         }).fail(function (jqXHR, textStatus) {
             console.log(jqXHR);
         });
@@ -117,9 +98,42 @@ var StudentInfoController = (function () {
         renderTable(data);
     };
 
+    var deleteStudent = function (event) {
+
+        var $target = $(event.target);
+        var dataIdStudent = $target.data("student");
+
+        var urlDelete = APIurlStrings.apiDeleteStudent + dataIdStudent;
+        var getApiDeleteStudent = utilidades.DeleteAjaxDatos(urlDelete);
+
+        getApiDeleteStudent.success(function (data, textStatus, jQxhr) {
+            location.href = "/";
+        }).error(function (jqXhr, textStatus, errorThrown) {
+            console.log(errorThrown);
+        });
+
+    };
+
+    var viewStudent = function (event) {
+
+        var $target = $(event.target);
+        var dataIdStudent = $target.data("student");
+
+        var urlSelect = APIurlStrings.getApiReadStudent + dataIdStudent;
+        var getApiReadStudent = utilidades.getDatos(APIurlStrings.urlSelect);
+
+        getApiReadStudent.done(function (data) {
+            location.href = "Views/view.html?id=" + dataIdStudent;
+        }).fail(function (jqXHR, textStatus) {
+            console.log(jqXHR);
+        });
+    };
+
+    var editStudent = function (event) {
+
+    };
+
     return {
-        getDOMEventStrings: getDOMEventStrings,
-        getApiurlStrings: getAPIurlStrings,
         loadApiStudents: loadApiStudents
     };
 
@@ -128,14 +142,9 @@ var StudentInfoController = (function () {
 
 var controller = (function (StudentInfoCtrl) {
 
-    var setupEventListeners = function () {
-
-    };
-
     return {
         init: function () {
             console.log('Application has started');
-            setupEventListeners();
             StudentInfoCtrl.loadApiStudents();
         }
     };

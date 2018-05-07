@@ -1,0 +1,38 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Create Student</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/Content/bootstrap.css">
+</head>
+<body>
+    <div>
+        <h1>Create NEW Student</h1>
+        <div class="row">
+            <div class="col-md-offset-1 col-md-10 col-sm-12">
+                <form action="" onsubmit="return false;">
+                    <ul>
+                        <li><input id="name" type="text" size="50" placeholder="Nombre"></li>
+                        <li><input id="apellidos" type="text" size="50" placeholder="Apellidos"></li>
+                        <li><input id="dni" type="text" size="50" placeholder="Dni"></li>
+                        <li><input id="fechanacimiento" type="text" size="50" placeholder="fecha nacimiento"></li>
+                        <li>
+                            <button id="create_student" class="btn btn-info">Create Student</button>
+                        </li>
+                    </ul>
+                </form>
+            </div>
+            <div class="col-md-offset-1 col-md-10 col-sm-12">
+                <p>
+                    <a href="/">back to home</a>
+                </p>
+            </div>
+        </div>
+    </div>
+    <script src="/Scripts/jquery-1.10.2.js"></script>
+    <script src="/Scripts/bootstrap.js"></script>
+    <script src="/Scripts/utilidades.js"></script>
+    <script src="/Scripts/create.js"></script>
+</body>
+</html>
